@@ -1,0 +1,37 @@
+admin:
+  access_log_path: /dev/null
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+static_resources:
+  clusters:
+    - name: backend
+      type: STATIC
+      connect_timeout: 1s
+      load_assignment:
+        cluster_name: backend
+        endpoints:
+          lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 127.0.0.1
+                    port_value: 10081
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 127.0.0.1
+                    port_value: 10082
+  listeners:
+    - address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 10080
+      filter_chains:
+        - filters:
+          - name: envoy.tcp_proxy
+            typed_config:
+              "@type":  type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+              stat_prefix: backend
+              cluster: backend
