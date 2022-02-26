@@ -14,21 +14,13 @@ static_resources:
         cluster_name: backend
         endpoints:
           lb_endpoints:
+          <%- endpoints.each do |port| -%>
             - endpoint:
                 address:
                   socket_address:
                     address: 127.0.0.1
-                    port_value: 10081
-            - endpoint:
-                address:
-                  socket_address:
-                    address: 127.0.0.1
-                    port_value: 10082
-            - endpoint:
-                address:
-                  socket_address:
-                    address: 127.0.0.1
-                    port_value: 10083
+                    port_value: <%= port %>
+          <%- end -%>
   listeners:
     - address:
         socket_address:
