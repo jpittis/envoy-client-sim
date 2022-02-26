@@ -9,7 +9,14 @@ static_resources:
     - name: backend
       type: STATIC
       connect_timeout: 1s
+      lb_policy: ROUND_ROBIN
+      common_http_protocol_options:
+        idle_timeout: 60s
       http2_protocol_options: {}
+      # TODO: Reminder to play with preconnect at some point.
+      # preconnect_policy:
+      #   per_upstream_preconnect_ratio
+      #   predictive_preconnect_ratio
       load_assignment:
         cluster_name: backend
         endpoints:

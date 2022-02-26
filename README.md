@@ -5,10 +5,18 @@ gRPC applications (I'm mostly interested in latency).
 
 Adjust the number of backend endpoints by editing the config at the top of `config/erb.rb`.
 
+```
+num_endpoints   = 5
+base_port       = 10081
+lb_policy       = 'ROUND_ROBIN'
+connect_timeout = '1s'
+idle_timeout    = '60s' # Defaults to 1h
+```
+
 Run the generate script:
 
 ```
-cd config && ./erb.rb
+./config/erb.rb
 ```
 
 Then start the sim with docker-compose:
