@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "github.com/jpittis/envoy-client-sim/backend/proto";
+
+service Backend {
+  rpc Get(GetRequest) returns (GetResponse);
+}
+
+message GetRequest {}
+
+message GetResponse {
+  string name = 1;
+}
