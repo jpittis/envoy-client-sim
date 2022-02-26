@@ -2,7 +2,7 @@
 
 require 'erb'
 
-num_endpoints = 4
+num_endpoints = 5
 base_port     = 10081
 
 endpoints = []
