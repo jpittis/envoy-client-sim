@@ -41,11 +41,13 @@ func main() {
 	}
 	defer conn.Close()
 	for {
+		start := time.Now()
 		rep, err := client.Get(context.Background(), &pb.GetRequest{})
+		duration := time.Since(start)
 		if err != nil {
-			log.Println("Failure!")
+			log.Printf("Failure! (duration=%s)", duration)
 		} else {
-			log.Printf("Success! (%s)", rep.Name)
+			log.Printf("Success! (name=%s, duration=%s)", rep.Name, duration)
 		}
 		time.Sleep(1 * time.Second)
 	}
