@@ -7,4 +7,6 @@ services:
     network_mode: host
   backend:
     build: ./backend
+    volumes:
+      - ./config/endpoints.txt:/etc/endpoints.txt
     network_mode: host

@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"log"
 	"net"
+	"strings"
 	"time"
 
 	"google.golang.org/grpc"
@@ -11,20 +13,27 @@ import (
 	pb "github.com/jpittis/envoy-client-sim/backend/proto"
 )
 
-func main() {
-	go func() {
-		err := listen("127.0.0.1:10081", "10081")
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+// Mostly so I can run the binary outside of docker-compose.
+var defaultEndpoints = []string{"10081", "10082"}
 
-	go func() {
-		err := listen("127.0.0.1:10082", "10082")
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+func main() {
+	endpoints := defaultEndpoints
+	buf, err := ioutil.ReadFile("/etc/endpoints.txt")
+	if err != nil {
+		log.Println("Error:", err)
+	} else {
+		endpoints = strings.Split(string(buf), ",")
+	}
+	log.Println("Endpoints:", endpoints)
+
+	for _, port := range endpoints {
+		go func(port string) {
+			err := listen("127.0.0.1:"+port, port)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}(port)
+	}
 
 	client, conn, err := connect("127.0.0.1:10080")
 	if err != nil {

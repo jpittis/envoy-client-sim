@@ -29,6 +29,11 @@ static_resources:
                   socket_address:
                     address: 127.0.0.1
                     port_value: 10083
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 127.0.0.1
+                    port_value: 10084
   listeners:
     - address:
         socket_address:
