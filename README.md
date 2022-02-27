@@ -48,4 +48,3 @@ Envoy worker concurrency can be configured in `config/Docker-envoy`.
 ### Todo
 
 - Report duration metrics from the client.
-- Hook up Envoy metrics to prometheus.
