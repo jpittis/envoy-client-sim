@@ -5,6 +5,7 @@ services:
       dockerfile: config/Dockerfile-envoy
     volumes:
       - ./config/envoy.yml:/etc/envoy/envoy.yaml
+      - ./config/concurrency.txt:/etc/envoy/concurrency.txt
     network_mode: host
   backend:
     build: ./backend

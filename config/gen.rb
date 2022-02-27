@@ -8,6 +8,7 @@ lb_policy            = 'ROUND_ROBIN'
 connect_timeout      = '1s'
 idle_timeout         = '60s' # Defaults to 1h
 enable_exact_balance = true
+concurrency          = 4
 
 endpoints = []
 next_port = base_port
@@ -22,3 +23,6 @@ File.write('config/envoy.yml', template.result(binding))
 
 # Write out the ports to a config file to be consumed by backend service
 File.write('config/endpoints.txt', endpoints.join(','))
+
+# Controls number of Envoy workers on process start
+File.write('config/concurrency.txt', concurrency)
