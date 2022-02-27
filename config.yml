@@ -1,12 +1,23 @@
+# The number of backend gRPC endpoints that Envoy load balances across.
 num_endpoints: 5
+# Each endpoint will listen on a port range starting at this base port.
 base_port: 10081
+# The load balancing algorithm used by Envoy.
 lb_policy: ROUND_ROBIN
+# The connection timeout used by Envoy.
 connect_timeout: 1s
+# The idle timeout used by Envoy.
 idle_timeout: 60s
+# Whether Envoy tries to evenly balance inbound connections across its workers.
 enable_exact_balance: true
+# The number of workers Envoy spawns.
 concurrency: 4
+# Whether to enable Envoy's preconnect feature.
 enable_preconnect: false
+# How to configure Envoy's preocnnect feature if enabled.
 per_upstream_preconnect_ratio: 1
 predictive_preconnect_ratio: 1
+# The number of concurrent gRPC clients connecting to Envoy.
 num_clients: 1
+# How long each gRPC client sleeps between requests.
 sleep_between_requests_ms: 1000
