@@ -1,7 +1,8 @@
 version: "3"
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.16-latest
+    build:
+      dockerfile: config/Dockerfile-envoy
     volumes:
       - ./config/envoy.yml:/etc/envoy/envoy.yaml
     network_mode: host

@@ -43,9 +43,10 @@ tc script I cooked up (which currently defaults to 100ms):
 ./bin/delay.sh
 ```
 
+Envoy worker concurrency can be configured in `config/Docker-envoy`.
+
 ### Todo
 
-- Add a way to configure the number of Envoy workers.
 - Hook up a stats pipeline for graphing results.
 - Add an optional pooling gRPC client.
 - Add an option to enable exact load balancing.
