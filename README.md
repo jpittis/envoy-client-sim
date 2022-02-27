@@ -44,3 +44,7 @@ tc script I cooked up (which currently defaults to 100ms):
 ```
 
 Envoy worker concurrency can be configured in `config/Docker-envoy`.
+
+A grafana dashboard is available at `localhost:3000`.
+
+The usage of cadvisor means this project will likely not work on OSX, only Linux.
