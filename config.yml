@@ -8,3 +8,5 @@ concurrency: 4
 enable_preconnect: false
 per_upstream_preconnect_ratio: 1
 predictive_preconnect_ratio: 1
+num_clients: 1
+sleep_between_requests_ms: 1000

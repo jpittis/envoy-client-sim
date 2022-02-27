@@ -7,6 +7,7 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -14,18 +14,17 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
+	yaml "gopkg.in/yaml.v2"
 
 	pb "github.com/jpittis/envoy-client-sim/backend/proto"
 )
 
-const (
+var (
+	// These defaults are mostly here so this binary can be run outside of it's
+	// docker-compose environment.
+	defaultEndpoints     = []string{"10081", "10082"}
 	numClients           = 2
 	sleepBetweenRequests = 1 * time.Second
-)
-
-// Mostly so I can run the binary outside of docker-compose without it crashing.
-var (
-	defaultEndpoints = []string{"10081", "10082"}
 
 	success = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "backend_success_total",
@@ -43,10 +42,27 @@ var (
 )
 
 func main() {
-	endpoints := defaultEndpoints
+	config := map[string]interface{}{}
+	buf, err := ioutil.ReadFile("/etc/config.yml")
+	if err != nil {
+		log.Println(err)
+	}
+	err = yaml.Unmarshal(buf, &config)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("Config:", config)
+	if config["num_clients"] != nil {
+		numClients = config["num_clients"].(int)
+	}
+	if config["sleep_between_requests_ms"] != nil {
+		ms := config["sleep_between_requests_ms"].(int)
+		sleepBetweenRequests = time.Duration(ms) * time.Millisecond
+	}
 	// Source endpoint config from a shared file so that they can be coordinated with the
 	// generated Envoy config.
-	buf, err := ioutil.ReadFile("/etc/endpoints.txt")
+	endpoints := defaultEndpoints
+	buf, err = ioutil.ReadFile("/etc/endpoints.txt")
 	if err != nil {
 		log.Println("Error:", err)
 	} else {

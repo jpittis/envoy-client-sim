@@ -11,6 +11,7 @@ services:
     build: ./backend
     volumes:
       - ./config/endpoints.txt:/etc/endpoints.txt
+      - ./config.yml:/etc/config.yml
     network_mode: host
   prometheus:
     image: prom/prometheus
