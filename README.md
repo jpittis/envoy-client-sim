@@ -48,5 +48,3 @@ Envoy worker concurrency can be configured in `config/Docker-envoy`.
 ### Todo
 
 - Hook up a stats pipeline for graphing results.
-- Add an optional pooling gRPC client.
-- Add a way for the client to adjust throughput.

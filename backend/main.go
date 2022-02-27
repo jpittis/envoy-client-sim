@@ -4,6 +4,7 @@ import (
 	"context"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"strings"
 	"time"
@@ -13,11 +14,18 @@ import (
 	pb "github.com/jpittis/envoy-client-sim/backend/proto"
 )
 
-// Mostly so I can run the binary outside of docker-compose.
+const (
+	numClients           = 2
+	sleepBetweenRequests = 1 * time.Second
+)
+
+// Mostly so I can run the binary outside of docker-compose without it crashing.
 var defaultEndpoints = []string{"10081", "10082"}
 
 func main() {
 	endpoints := defaultEndpoints
+	// Source endpoint config from a shared file so that they can be coordinated with the
+	// generated Envoy config.
 	buf, err := ioutil.ReadFile("/etc/endpoints.txt")
 	if err != nil {
 		log.Println("Error:", err)
@@ -25,7 +33,7 @@ func main() {
 		endpoints = strings.Split(string(buf), ",")
 	}
 	log.Println("Endpoints:", endpoints)
-
+	// Spawn one gRPC server per endpoint to simulate multiple backends.
 	for _, port := range endpoints {
 		go func(port string) {
 			err := listen("127.0.0.1:"+port, port)
@@ -34,23 +42,31 @@ func main() {
 			}
 		}(port)
 	}
+	// Spawn one or more gRPC clients, each serially generating load controlled by the
+	// sleep time between requests.
+	for i := 0; i < numClients; i++ {
+		go func() {
+			client, conn, err := connect("127.0.0.1:10080")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer conn.Close()
 
-	client, conn, err := connect("127.0.0.1:10080")
-	if err != nil {
-		log.Fatal(err)
+			for {
+				start := time.Now()
+				rep, err := client.Get(context.Background(), &pb.GetRequest{})
+				duration := time.Since(start)
+				if err != nil {
+					log.Printf("Failure! (duration=%s)", duration)
+				} else {
+					log.Printf("Success! (name=%s, duration=%s)", rep.Name, duration)
+				}
+				withJitter := time.Duration(rand.Int63n(int64(sleepBetweenRequests) * 2))
+				time.Sleep(withJitter)
+			}
+		}()
 	}
-	defer conn.Close()
-	for {
-		start := time.Now()
-		rep, err := client.Get(context.Background(), &pb.GetRequest{})
-		duration := time.Since(start)
-		if err != nil {
-			log.Printf("Failure! (duration=%s)", duration)
-		} else {
-			log.Printf("Success! (name=%s, duration=%s)", rep.Name, duration)
-		}
-		time.Sleep(1 * time.Second)
-	}
+	select {} // Block forever.
 }
 
 func listen(addr, name string) error {
