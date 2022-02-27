@@ -51,7 +51,6 @@ static_resources:
         socket_address:
           address: 0.0.0.0
           port_value: 10080
-      # Enable or disable exact balancing with comments.
       connection_balance_config:
         exact_balance: {}
       filter_chains:

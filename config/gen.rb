@@ -2,11 +2,12 @@
 
 require 'erb'
 
-num_endpoints   = 5
-base_port       = 10081
-lb_policy       = 'ROUND_ROBIN'
-connect_timeout = '1s'
-idle_timeout    = '60s' # Defaults to 1h
+num_endpoints        = 5
+base_port            = 10081
+lb_policy            = 'ROUND_ROBIN'
+connect_timeout      = '1s'
+idle_timeout         = '60s' # Defaults to 1h
+enable_exact_balance = true
 
 endpoints = []
 next_port = base_port

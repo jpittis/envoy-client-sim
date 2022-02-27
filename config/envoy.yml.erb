@@ -33,9 +33,10 @@ static_resources:
         socket_address:
           address: 0.0.0.0
           port_value: 10080
-      # Enable or disable exact balancing with comments.
+      <%- if enable_exact_balance -%>
       connection_balance_config:
         exact_balance: {}
+      <%- end -%>
       filter_chains:
         - filters:
           - name: envoy.filters.network.http_connection_manager
