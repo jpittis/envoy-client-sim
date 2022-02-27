@@ -6,9 +6,13 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"net/http"
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 
 	pb "github.com/jpittis/envoy-client-sim/backend/proto"
@@ -20,7 +24,18 @@ const (
 )
 
 // Mostly so I can run the binary outside of docker-compose without it crashing.
-var defaultEndpoints = []string{"10081", "10082"}
+var (
+	defaultEndpoints = []string{"10081", "10082"}
+
+	success = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "backend_success_total",
+		Help: "A count of successful requests",
+	})
+	failure = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "backend_failure_total",
+		Help: "A count of failed requests",
+	})
+)
 
 func main() {
 	endpoints := defaultEndpoints
@@ -57,8 +72,10 @@ func main() {
 				rep, err := client.Get(context.Background(), &pb.GetRequest{})
 				duration := time.Since(start)
 				if err != nil {
+					failure.Inc()
 					log.Printf("Failure! (duration=%s)", duration)
 				} else {
+					success.Inc()
 					log.Printf("Success! (name=%s, duration=%s)", rep.Name, duration)
 				}
 				withJitter := time.Duration(rand.Int63n(int64(sleepBetweenRequests) * 2))
@@ -66,7 +83,9 @@ func main() {
 			}
 		}()
 	}
-	select {} // Block forever.
+	// Block on running a prometheus metrics endpoint.
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe("127.0.0.1:2112", nil))
 }
 
 func listen(addr, name string) error {

@@ -47,4 +47,5 @@ Envoy worker concurrency can be configured in `config/Docker-envoy`.
 
 ### Todo
 
-- Hook up a stats pipeline for graphing results.
+- Report duration metrics from the client.
+- Hook up Envoy metrics to prometheus.
