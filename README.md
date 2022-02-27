@@ -44,7 +44,3 @@ tc script I cooked up (which currently defaults to 100ms):
 ```
 
 Envoy worker concurrency can be configured in `config/Docker-envoy`.
-
-### Todo
-
-- Report duration metrics from the client.

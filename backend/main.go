@@ -35,6 +35,11 @@ var (
 		Name: "backend_failure_total",
 		Help: "A count of failed requests",
 	})
+	latency = promauto.NewSummary(prometheus.SummaryOpts{
+		Name:       "backend_latency",
+		Help:       "A summary of request latency",
+		Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
+	})
 )
 
 func main() {
@@ -69,8 +74,10 @@ func main() {
 
 			for {
 				start := time.Now()
+				timer := prometheus.NewTimer(latency)
 				rep, err := client.Get(context.Background(), &pb.GetRequest{})
 				duration := time.Since(start)
+				timer.ObserveDuration()
 				if err != nil {
 					failure.Inc()
 					log.Printf("Failure! (duration=%s)", duration)
