@@ -2,13 +2,16 @@
 
 require 'erb'
 
-num_endpoints        = 5
-base_port            = 10081
-lb_policy            = 'ROUND_ROBIN'
-connect_timeout      = '1s'
-idle_timeout         = '60s' # Defaults to 1h
-enable_exact_balance = true
-concurrency          = 4
+num_endpoints                 = 5
+base_port                     = 10081
+lb_policy                     = 'ROUND_ROBIN'
+connect_timeout               = '1s'
+idle_timeout                  = '60s'
+enable_exact_balance          = true
+concurrency                   = 4
+enable_preconnect             = false
+per_upstream_preconnect_ratio = 1
+predictive_preconnect_ratio   = 1
 
 endpoints = []
 next_port = base_port
